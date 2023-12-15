@@ -1,0 +1,26 @@
+* {
+  box-sizing: border-box;
+}
+
+body {
+  height: 100vh;
+  font-family: 'Poppins', 'Roboto', sans-serif;
+  font-size: 0.9rem;
+  margin: 0px;
+}
+
+#root {
+  height: 100%;
+  max-width: 100% !important;
+  margin:0 !important;
+  padding: 0 !important;
+}
+.spinner {
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}

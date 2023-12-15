@@ -3,14 +3,14 @@ version: "3.8"
 services:
   app_back:
     build:
-      context: ./
+      context: ./backend/
       dockerfile: Dockerfile
     image: lab4/back_end
     container_name: back_end
     env_file: .env
     command: uvicorn main:app --reload --workers 1 --host 0.0.0.0 --port 3000
     volumes:
-      - ./app:/code/app
+      - ./backend/app:/code/app
     ports:
       - "8000:3000"
     environment:
@@ -29,6 +29,27 @@ services:
       - POSTGRES_DB=db_lab4
     ports:
       - "5432:5432"
+    networks:
+      - mynetwork
+
+  
+  app_front:
+    build:
+      context: ./frontend/
+      dockerfile: Dockerfile
+      args:
+        VITE_API_BACKEND: ${VITE_API_BACKEND}
+    image: lab4/front_end
+    container_name: front_end
+    env_file:
+      - .env
+    environment:
+      - VITE_API_BACKEND=${VITE_API_BACKEND}
+    volumes:
+      - ./frontend:/home/node/app:rw
+    ports:
+      - "3000:5173"
+    restart: unless-stopped
     networks:
       - mynetwork
   
