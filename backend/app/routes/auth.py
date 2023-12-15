@@ -1,5 +1,5 @@
 from app.config.database import get_db
-from app.schemas.user import DecodeTokenResponse, UserLoginRequest, UserLoginResponse
+from app.schemas.user import DecodeTokenResponse, UserLoginRequest, UserSchema
 from app.services.user_services import login_user
 from app.utils.jwt import decode_token, encode_token
 from fastapi import APIRouter, Body, Depends
@@ -11,13 +11,13 @@ router = APIRouter()
 @router.post(
     "/",
     tags=["auth"],
-    response_model=UserLoginResponse,
+    response_model=UserSchema,
     description="Login user",
 )
 async def get_users_route(db: Session = Depends(get_db), user: UserLoginRequest = Body(...)):
     user_response = await login_user(user, db)
     token = encode_token(user_response)
-    return UserLoginResponse(id=user_response.id, name=user_response.name, email=user_response.email, token=token)
+    return UserSchema(id=user_response.id, name=user_response.name, email=user_response.email, token=token)
 
 
 @router.get(

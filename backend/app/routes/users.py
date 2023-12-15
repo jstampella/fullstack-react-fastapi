@@ -35,23 +35,24 @@ async def get_users_count(db: Session = Depends(get_db)):
     tags=["users"],
     response_model=UserSchema,
     description="Get a single user by Id",
+    dependencies=[Depends(verify_token)]
 )
 def get_user(id: str,db: Session = Depends(get_db)):
     return db.execute(UserModel.select().where(UserModel.c.id == id)).first()
 
 # POST
-@router.post("/", tags=["users"], response_model=UserSchema, description="Create a new user")
+@router.post("/", tags=["users"], response_model=UserSchema, description="Create a new user", dependencies=[Depends(verify_token)])
 async def create_user_route(db: Session = Depends(get_db), user: UserSchema = Body(...)):
     return await create_user(db, user)
 
 # PUT
 @router.put(
-    "/{id}", tags=["users"], response_model=UserSchema, description="Update a User by Id"
+    "/{id}", tags=["users"], response_model=UserSchema, description="Update a User by Id", dependencies=[Depends(verify_token)]
 )
 async def update_user_router(user: UserSchema, id: int,db: Session = Depends(get_db)):
     return await update_user(user, id, db)
 
 # DELETE
-@router.delete("/{id}", tags=["users"], description="Delete a User by Id", status_code=status.HTTP_204_NO_CONTENT)
+@router.delete("/{id}", tags=["users"], description="Delete a User by Id", status_code=status.HTTP_204_NO_CONTENT, dependencies=[Depends(verify_token)])
 async def delete_user_route(id: int, db: Session = Depends(get_db)):
     return await delete_user(id, db)

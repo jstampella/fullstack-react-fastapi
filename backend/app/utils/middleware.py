@@ -1,4 +1,5 @@
-from fastapi import FastAPI, HTTPException, Depends
+from app.models.ErrorResponse import MiExcepcion
+from fastapi import FastAPI, Depends
 from fastapi.security import HTTPBearer, HTTPAuthorizationCredentials
 
 app = FastAPI()
@@ -9,6 +10,6 @@ def verify_token(credentials: HTTPAuthorizationCredentials = Depends(security)):
     token = credentials.credentials
 
     if not token:
-        raise HTTPException(status_code=401, detail="Token requerido")
+        raise MiExcepcion(code=401, mensaje="Token requerido")
     elif token != "mi_token_secreto":
-        raise HTTPException(status_code=403, detail="Token no válido")
+        raise MiExcepcion(code=403, mensaje="Token no válido")

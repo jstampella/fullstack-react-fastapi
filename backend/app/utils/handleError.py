@@ -15,21 +15,49 @@ async def custom_exception_handler(request, exc):
             content=error_response.dict(),
         )
     elif isinstance(exc, MiExcepcion):
-        if isinstance(exc.error, IntegrityError):
+        if exc.error is None:
+            error_response = ErrorResponse(
+                detail=exc.mensaje,
+                code=exc.code
+            )
+        elif isinstance(exc.error, MiExcepcion):
+            error_response = ErrorResponse(
+                detail=exc.error.mensaje,
+                code=exc.error.code
+            )
+        elif isinstance(exc.error, IntegrityError):
             if isinstance(exc.error.orig, errors.ForeignKeyViolation):
-                error_response = ErrorResponse(detail=f'Error en la clave foránea, verifique el id: {exc.error.orig.diag.message_detail}', code=500)
+                error_response = ErrorResponse(
+                    detail=f'Error en la clave foránea, verifique el id: {exc.error.orig.diag.message_detail}',
+                    code=500
+                )
             else:
-                error_response = ErrorResponse(code=500, detail=f'Error de integridad de la base de datos: {str(exc.error)}')
+                error_response = ErrorResponse(
+                    code=500,
+                    detail=f'Error de integridad de la base de datos: {str(exc.error)}'
+                )
         elif isinstance(exc.error, SQLAlchemyError):
-            error_response = ErrorResponse(detail=f'Error SQL: {str(exc.error)}', code=500)
-    
-    if error_response is None:
-        error_response = ErrorResponse(detail=f'Error Genérico: {str(exc)}', code=500)
+            error_response = ErrorResponse(
+                detail=f'Error SQL: {str(exc.error)}',
+                code=500
+            )
+        else:
+            error_response = ErrorResponse(
+                detail=f'Error Generico: {str(exc.error)}',
+                code=500
+            )
+    else:
+        error_response = ErrorResponse(
+            detail=f'Error en Servidor: {str(exc)}',
+            code=500
+        )
+
     return JSONResponse(
         status_code=500,
-        content=error_response.dict(),
+        content=error_response.to_dict(),
     )
-    
+
+
 
 async def validation_exception_handler(request: Request, exc: ResponseValidationError):
     errores = exc.errors()

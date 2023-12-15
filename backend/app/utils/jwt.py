@@ -1,5 +1,5 @@
+from app.models.ErrorResponse import MiExcepcion
 from app.models.user import UserModel
-from fastapi import HTTPException
 from sqlalchemy.orm import class_mapper
 import base64
 from cryptography.hazmat.primitives import hashes
@@ -36,9 +36,9 @@ def decript_pass(password:str):
         decrypted_password = fernet.decrypt(stored_password_bytes).decode("utf-8")
         return decrypted_password
     except InvalidToken:
-        raise HTTPException(status_code=404, detail="Error al decodificar password")
+        raise MiExcepcion(code=404, mensaje="Error al decodificar password")
     except Exception:
-        raise HTTPException(status_code=500, detail="Ocurrio un Error con el password")
+        raise MiExcepcion(code=500, mensaje="Ocurrio un Error con el password")
 
 
 def encode_token(payload: UserModel):
@@ -63,6 +63,6 @@ def decode_token(token:str):
         decrypted_json = json.loads(decrypted_password_str)
         return decrypted_json
     except InvalidToken as e:
-        raise HTTPException(status_code=400, detail="El token es invalido")
+        raise MiExcepcion(code=400, mensaje="El token es invalido")
     except Exception as e:
-        raise HTTPException(status_code=500, detail="Ocurrio un Error con el token")
+        raise MiExcepcion(code=500, mensaje="Ocurrio un Error con el token")

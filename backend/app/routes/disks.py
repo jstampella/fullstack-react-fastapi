@@ -25,18 +25,19 @@ async def get_disks_route(db: Session = Depends(get_db)):
     tags=["disks"],
     response_model=DiskSchema,
     description="Get a single disk by Id",
+    dependencies=[Depends(verify_token)]
 )
 async def get_disk_route(id: str,db: Session = Depends(get_db)):
     return await get_disk_id(id,db)
 
 # POST
-@router.post("/", tags=["disks"], response_model=DiskSchema, description="Create a new disk")
+@router.post("/", tags=["disks"], response_model=DiskSchema, description="Create a new disk", dependencies=[Depends(verify_token)])
 async def create_disk_route(db: Session = Depends(get_db), user: DiskSchema = Body(...)):
     return await create_disk(db, user)
 
 #PUT
 @router.put(
-    "/{id}", tags=["disks"], response_model=DiskSchema, description="Update a Disk by Id"
+    "/{id}", tags=["disks"], response_model=DiskSchema, description="Update a Disk by Id", dependencies=[Depends(verify_token)]
 )
 async def update_user_router(disk: DiskSchema, id: int,db: Session = Depends(get_db)):
     return await update_disk(disk, id, db)

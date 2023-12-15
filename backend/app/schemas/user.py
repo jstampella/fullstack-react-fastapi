@@ -6,6 +6,7 @@ class UserSchema(BaseModel):
     name: str
     email: str
     password: str
+    token:str = None
 
 
 class UserCount(BaseModel):
