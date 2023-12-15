@@ -1,0 +1,12 @@
+asyncpg
+databases[postgresql]
+fastapi
+SQLAlchemy
+uvicorn
+psycopg2
+cryptography==3.4.7
+pyjwt
+
+# dev
+pytest
+requests

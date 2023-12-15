@@ -1,0 +1,41 @@
+version: "3.8"
+
+services:
+  app_back:
+    build:
+      context: ./
+      dockerfile: Dockerfile
+    image: lab4/back_end
+    container_name: back_end
+    env_file: .env
+    command: uvicorn main:app --reload --workers 1 --host 0.0.0.0 --port 3000
+    volumes:
+      - ./app:/code/app
+    ports:
+      - "8000:3000"
+    environment:
+      - DATABASE_URL=postgresql://hello_fastapi:hello_fastapi@database_lab4/db_lab4
+    networks:
+      - mynetwork
+
+  database_lab4:
+    image: postgres:12.1-alpine
+    container_name: database_lab4
+    volumes:
+      - postgres_data:/var/lib/postgresql/data/
+    environment:
+      - POSTGRES_USER=hello_fastapi
+      - POSTGRES_PASSWORD=hello_fastapi
+      - POSTGRES_DB=db_lab4
+    ports:
+      - "5432:5432"
+    networks:
+      - mynetwork
+  
+volumes:
+  postgres_data:
+
+networks:
+  mynetwork:
+    external: true
+    name: network_lab4
