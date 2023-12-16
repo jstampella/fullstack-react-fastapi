@@ -1,16 +1,16 @@
 import { Navigate, Route, Routes } from 'react-router-dom';
-import { ClientsPage } from '../pages/client/ClientsPage';
-import { ClientFormPage } from '../pages/client/ClientFormPage';
+import { ClientFormPage } from '../pages/notebook/NotebookFormPage';
 import { LoginPage, RegisterPage } from '../pages/auth';
 import { HomePage } from '../pages/HomePage';
+import { NotebooksPage } from '../pages/notebook/NotebooksPage';
 
 export const AuthenticatedRoutes = () => {
   return (
     <Routes>
       <Route path='/' element={<HomePage />} />
-      <Route path='/clients' element={<ClientsPage />} />
-      <Route path='/add-client' element={<ClientFormPage />} />
-      <Route path='/add-client/:id' element={<ClientFormPage />} />
+      <Route path='/notebooks' element={<NotebooksPage />} />
+      <Route path='/add-notebook' element={<ClientFormPage />} />
+      <Route path='/add-notebook/:id' element={<ClientFormPage />} />
       <Route path='/profile' element={<h1>Profile</h1>} />
       <Route path='/*' element={<Navigate to='/' />} />
     </Routes>

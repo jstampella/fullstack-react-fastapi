@@ -1,12 +1,15 @@
 from typing import Optional
-from pydantic import BaseModel
+from pydantic import BaseModel, BaseConfig
 
 class UserSchema(BaseModel):
     id: Optional[int] = None
     name: str
     email: str
     password: str
-    token:str = None
+    token: Optional[str] = None
+
+class ExtendedUserSchema(UserSchema):
+    password: Optional[str] = None
 
 
 class UserCount(BaseModel):
@@ -22,7 +25,7 @@ class UserLoginRequest(BaseModel):
     password: str
     email: str
 
-class DecodeTokenResponse(BaseModel):
+class DecodeToken(BaseModel):
     id: int
     name: str
     email: str

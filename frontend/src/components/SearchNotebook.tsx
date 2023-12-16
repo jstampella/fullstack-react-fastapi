@@ -1,3 +1,4 @@
+/* eslint-disable camelcase */
 import {
   Alert,
   Button,
@@ -15,22 +16,24 @@ import {
   AccordionDetails,
   IconButton,
 } from '@mui/material';
-import { useForm } from '../hooks';
-import { IClientFormSearch, IClientSearch } from '../interfaces';
+import { useForm, useNotebookStore } from '../hooks';
 import { formValidationsSearch } from '../helpers/validator.client';
 import { useEffect, useMemo, useState } from 'react';
 import { AiFillDelete, AiOutlineLoading } from 'react-icons/ai';
-import { onChangeStatus, statusClient } from '../store/client';
-import { useClientStore } from '../hooks/useClientStore';
 import { BsFillArrowDownCircleFill } from 'react-icons/bs';
 import { compartirObjetos, objectToUrlParams } from '../utils/common';
 import { useDispatch } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
-const formInit = {
-  dni: '',
-  nombre: '',
-  apellido: '',
-  sexo: '',
+import { INotebookCreate } from '../interfaces';
+import { onChangeStatus, statusNotebook } from '../store/notebook';
+
+export const formInit: INotebookCreate = {
+  disco_rigido_id: 1,
+  marca: '',
+  memoria: '',
+  modelo: '',
+  placa_video: '',
+  precio: 0,
 };
 
 const stiloInput = {
@@ -58,28 +61,28 @@ const stiloInput = {
 };
 
 interface Props {
-  clientParams?: IClientFormSearch;
+  clientParams?: INotebookCreate;
 }
 
-export const SearchClient = ({ clientParams }: Props) => {
-  const { status, errorMessage } = useClientStore();
+export const SearchNotebook = ({ clientParams }: Props) => {
+  const { status, errorMessage } = useNotebookStore();
   const [formSubmitted, setFormSubmitted] = useState(false);
   const {
-    dni,
-    nombre,
-    apellido,
-    sexo,
-    dniValid,
-    nombreValid,
-    apellidoValid,
-    sexoValid,
+    marca,
+    modelo,
+    memoria,
+    placa_video,
+    marcaValid,
+    modeloValid,
+    memoriaValid,
+    placa_videoValid,
     isFormValid,
     onInputChange,
     formState,
     isSubmit,
     onResetForm,
-  } = useForm<IClientFormSearch>(clientParams || formInit, formValidationsSearch); // falta el formValidation
-  const isSearching = useMemo(() => status === statusClient.saving, [status]);
+  } = useForm<INotebookCreate>(clientParams || formInit, formValidationsSearch); // falta el formValidation
+  const isSearching = useMemo(() => status === statusNotebook.saving, [status]);
   const dispatch = useDispatch();
   const navigate = useNavigate();
 
@@ -90,7 +93,7 @@ export const SearchClient = ({ clientParams }: Props) => {
   };
 
   useEffect(() => {
-    if (compartirObjetos<IClientFormSearch>(clientParams as IClientFormSearch, formInit))
+    if (compartirObjetos<INotebookCreate>(clientParams as INotebookCreate, formInit))
       setExpanded(false);
     else setExpanded(true);
   }, [clientParams]);
@@ -98,11 +101,13 @@ export const SearchClient = ({ clientParams }: Props) => {
   const onSubmit = async (event: React.FormEvent<EventTarget>): Promise<void> => {
     event.preventDefault();
     setFormSubmitted(true);
-    const formSearch: IClientSearch = {
-      apellido: formState.apellido || undefined,
-      dni: formState.dni || undefined,
-      nombre: formState.nombre || undefined,
-      sexo: formState.sexo || undefined,
+    const formSearch: Partial<INotebookCreate> = {
+      disco_rigido_id: formState.disco_rigido_id || undefined,
+      marca: formState.marca || undefined,
+      memoria: formState.memoria || undefined,
+      modelo: formState.modelo || undefined,
+      placa_video: formState.placa_video || undefined,
+      precio: 0,
       limit: 5,
       page: 0,
     };
@@ -113,9 +118,9 @@ export const SearchClient = ({ clientParams }: Props) => {
   };
 
   const onDelete = () => {
-    dispatch(onChangeStatus(statusClient.clear));
+    dispatch(onChangeStatus(statusNotebook.clear));
     onResetForm();
-    navigate('/clients');
+    navigate('/notebooks');
   };
   return (
     <Box
@@ -143,19 +148,49 @@ export const SearchClient = ({ clientParams }: Props) => {
               <Box sx={{ m: 1, flex: 1, minWidth: '200px' }}>
                 <TextField
                   sx={stiloInput}
-                  label='DNI'
+                  label='Marca'
                   type='text'
-                  placeholder='Dni usuario'
+                  placeholder='Marca Note'
                   fullWidth
-                  name='dni'
-                  value={dni}
+                  name='marca'
+                  value={marca}
                   onChange={onInputChange}
-                  error={!!dniValid && formSubmitted}
-                  helperText={dniValid}
+                  error={!!marcaValid && formSubmitted}
+                  helperText={marcaValid}
                   FormHelperTextProps={{ sx: { color: 'red' } }}
                 />
               </Box>
-              <Box sx={{ m: 1, minWidth: '100px' }}>
+              <Box sx={{ m: 1, flex: 1, minWidth: '200px' }}>
+                <TextField
+                  sx={stiloInput}
+                  label='Modelo'
+                  type='text'
+                  placeholder='Marca Note'
+                  fullWidth
+                  name='modelo'
+                  value={modelo}
+                  onChange={onInputChange}
+                  error={!!modeloValid && formSubmitted}
+                  helperText={modeloValid}
+                  FormHelperTextProps={{ sx: { color: 'red' } }}
+                />
+              </Box>
+              <Box sx={{ m: 1, flex: 1, minWidth: '200px' }}>
+                <TextField
+                  sx={stiloInput}
+                  label='Placa video'
+                  type='text'
+                  placeholder='Placa video'
+                  fullWidth
+                  name='placa_video'
+                  value={placa_video}
+                  onChange={onInputChange}
+                  error={!!placa_videoValid && formSubmitted}
+                  helperText={placa_videoValid}
+                  FormHelperTextProps={{ sx: { color: 'red' } }}
+                />
+              </Box>
+              {/* <Box sx={{ m: 1, minWidth: '100px' }}>
                 <FormControl sx={{ ...stiloInput, minWidth: '100px' }} size='small'>
                   <InputLabel sx={{ marginTop: '6px' }} id='demo-select-small-label'>
                     Sexo
@@ -178,37 +213,7 @@ export const SearchClient = ({ clientParams }: Props) => {
                   </Select>
                   <FormHelperText sx={{ color: 'red' }}>{sexoValid}</FormHelperText>
                 </FormControl>
-              </Box>
-              <Box sx={{ m: 1, minWidth: '80px', flex: 1 }}>
-                <TextField
-                  sx={stiloInput}
-                  label='Nombre'
-                  type='text'
-                  placeholder='juan carlos'
-                  fullWidth
-                  name='nombre'
-                  value={nombre}
-                  onChange={onInputChange}
-                  error={!!nombreValid && formSubmitted}
-                  helperText={nombreValid}
-                  FormHelperTextProps={{ sx: { color: 'red' } }}
-                />
-              </Box>
-              <Box sx={{ m: 1, minWidth: '100px', flex: 1 }}>
-                <TextField
-                  sx={{ ...stiloInput }}
-                  label='Apellido'
-                  type='text'
-                  placeholder='Sanchez'
-                  fullWidth
-                  name='apellido'
-                  value={apellido}
-                  onChange={onInputChange}
-                  error={!!apellidoValid && formSubmitted}
-                  helperText={apellidoValid}
-                  FormHelperTextProps={{ sx: { color: 'red' } }}
-                />
-              </Box>
+              </Box> */}
               <Grid container spacing={2} sx={{ mb: 2, mt: 1 }}>
                 <Grid display={!!errorMessage ? '' : 'none'} item xs={12} sm={12}>
                   <Alert severity='error'>{errorMessage}</Alert>

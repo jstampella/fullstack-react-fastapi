@@ -1,6 +1,6 @@
-from app.models.ErrorResponse import MiExcepcion
+from app.models.common import MiExcepcion
 from app.models.notebook import NoteBookModel
-from app.schemas.notebook import NotebookSchema, NotebookUpdateSchema
+from app.schemas.notebook import NotebookPaginationSchema, NotebookSchema, NotebookUpdateSchema
 from sqlalchemy.orm import Session
 from fastapi.responses import JSONResponse
 from sqlalchemy import or_
@@ -34,7 +34,7 @@ async def get_notebooks(db: Session):
             disk_dict.pop('_sa_instance_state', None)
             serialized_notebooks.append(disk_dict)
         # Return the serialized_disks as a JSONResponse
-        return JSONResponse(serialized_notebooks)
+        return serialized_notebooks
     except MiExcepcion as e:
         raise MiExcepcion(**e.__dict__)
     except Exception as e:
@@ -82,8 +82,9 @@ async def delete_notebook(id: int, db: Session):
         db.delete(obj_to_delete)
         db.commit()
         userExist = db.query(NoteBookModel).get(id)
-        print(userExist)
-        return userExist
+        if userExist is not None:
+            raise MiExcepcion(code=404, mensaje="Notebook not delete")
+        return obj_to_delete
     except MiExcepcion as e:
         raise MiExcepcion(**e.__dict__)
     except Exception as e:
@@ -115,8 +116,7 @@ async def search_notebook(params: NotebookUpdateSchema, db: Session):
             notebook_dict = notebook.__dict__
             notebook_dict.pop('_sa_instance_state', None)
             serialized_notebooks.append(notebook_dict)
-
-        return JSONResponse(serialized_notebooks)
+        return NotebookPaginationSchema(total=10, limit=5, page=0, data=list(serialized_notebooks))
     except MiExcepcion as e:
         raise MiExcepcion(**e.__dict__)
     except Exception as e:

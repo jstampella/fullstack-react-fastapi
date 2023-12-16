@@ -58,9 +58,10 @@ export const useAuthStore = () => {
       return;
     }
     if (!cookies.token && token) Cookies.set('token', token);
+    if (cookies.token && !token) localStorage.setItem('token', cookies.token);
     try {
-      const res = await verifyTokenRequest();
-      if (!res._id) return startLogout();
+      const res = await verifyTokenRequest(token || cookies.token);
+      if (!res.id) return startLogout();
       dispatch(onLogin(res));
     } catch (error) {
       startLogout();

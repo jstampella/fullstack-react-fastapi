@@ -1,11 +1,10 @@
-from app.models.ErrorResponse import MiExcepcion
+from app.models.common import MiExcepcion
 from fastapi import FastAPI, HTTPException
 from fastapi.exceptions import ResponseValidationError 
 from fastapi.middleware.cors import CORSMiddleware
 from app.routes import router as app_router
 from app.utils.handleError import custom_exception_handler, validation_exception_handler
 from app.config.metadata import tags_metadata
-from fastapi.responses import JSONResponse
 from app.config.database import engine, metadata, database
 
 metadata.create_all(engine)
@@ -15,13 +14,14 @@ app = FastAPI(
     title="Backend - LAB4",
     description="a REST API using python and postgres",
     version="0.0.1",
-    openapi_tags=tags_metadata,
+    openapi_tags=tags_metadata
 )
 
 
 # Configuración de CORS
 origins = [
    "http://localhost:5173",
+   "http://localhost:3000",
    "http://localhost"
 ]
  
@@ -30,7 +30,7 @@ app.add_middleware(
     allow_origins=origins,
     allow_credentials=True,
     allow_methods=["GET", "POST", "PUT", "DELETE"],
-    allow_headers=["Content-Type"],
+    allow_headers=["*"],
 )
 
 

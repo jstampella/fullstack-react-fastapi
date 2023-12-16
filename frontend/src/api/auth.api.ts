@@ -12,8 +12,9 @@ import { ApiResponse } from '../interfaces';
  */
 export const loginApi = async (body: payloadLogin): Promise<IUserPayload> => {
   try {
-    const resp: AxiosResponse<ApiResponse> = await axios.post<ApiResponse>('/auth/login', body);
+    const resp: AxiosResponse<ApiResponse> = await axios.post<ApiResponse>('/auth', body);
     const response: IUserPayload = resp.data.data;
+    console.log(resp);
     return response;
   } catch (error: unknown) {
     return Promise.reject<IUserPayload>(handleError(error));
@@ -39,9 +40,9 @@ export const registerApi = async (body: payloadRegister): Promise<IUserPayload> 
  * Function that performs a token verification API request
  * @returns A promise that resolves with the user payload on success.
  */
-export const verifyTokenRequest = async (): Promise<IUserPayload> => {
+export const verifyTokenRequest = async (token: string): Promise<IUserPayload> => {
   try {
-    const resp: AxiosResponse<ApiResponse> = await axios.get<ApiResponse>('/auth/verify');
+    const resp: AxiosResponse<ApiResponse> = await axios.get<ApiResponse>(`/auth/${token}`);
     const response: IUserPayload = resp.data.data;
     return response;
   } catch (error: unknown) {

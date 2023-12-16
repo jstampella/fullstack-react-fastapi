@@ -1,9 +1,8 @@
-from app.models.ErrorResponse import MiExcepcion
+from app.models.common import MiExcepcion
 from app.models.user import UserModel
-from app.schemas.user import UserSchema
+from app.schemas.user import ExtendedUserSchema, UserSchema
 from app.utils.jwt import decript_pass, encript_pass
 from sqlalchemy.orm import Session
-from fastapi.responses import JSONResponse
 
 
 
@@ -31,9 +30,12 @@ async def get_users(db: Session):
     try:
         users =  db.query(UserModel).all()
         # Convertir Row a Diccionario y excluir la contraseña
-        data = [{k: v for k, v in u.__dict__.items() if k != '_sa_instance_state' and k != 'password'} for u in users]
-        # Devuelve el objeto serializable
-        return JSONResponse(data)
+        serialized_users = []
+        for disk in users:
+            disk_dict = disk.__dict__
+            disk_dict.pop('_sa_instance_state', None)
+            serialized_users.append(disk_dict)
+        return serialized_users
     except MiExcepcion as e:
         raise MiExcepcion(**e.__dict__)
     except Exception as e:
@@ -64,14 +66,16 @@ async def delete_user(id: int, db: Session):
         db.delete(obj_to_delete)
         db.commit()
         userExist = db.query(UserModel).get(id)
-        return userExist
+        if userExist is not None:
+            raise MiExcepcion(mensaje="User not Delete", code=400)
+        return obj_to_delete
     except MiExcepcion as e:
         raise MiExcepcion(**e.__dict__)
     except Exception as e:
         tipo_exc = type(e).__name__
         raise MiExcepcion(error=e, mensaje=tipo_exc)
 
-async def login_user(user: UserSchema, db: Session):
+async def login_user(user: ExtendedUserSchema, db: Session):
     try:
         # Desencripta la contraseña almacenada
         user_result = db.query(UserModel).filter_by(email=user.email).first()

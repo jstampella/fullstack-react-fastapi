@@ -1,6 +1,7 @@
+/* eslint-disable camelcase */
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import queryString from 'query-string';
-import { IClientFormSearch } from '../interfaces';
+import { INotebookCreate } from '../interfaces';
 
 /**
  * Función que valida si una cadena contiene solo números
@@ -29,6 +30,7 @@ export const validarSoloLetras = (cadena: string): boolean => {
  */
 export const objectToUrlParams = (obj: Record<string, any>): string => {
   const params = Object.entries(obj)
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     .filter(([_, value]: [string, any]) => value !== null && value !== undefined)
     .map(([key, value]: [string, any]) => `${encodeURIComponent(key)}=${encodeURIComponent(value)}`)
     .join('&');
@@ -36,14 +38,18 @@ export const objectToUrlParams = (obj: Record<string, any>): string => {
 };
 
 // Crear una función que convierta los datos a un tipo seguro sin valores nulos
-export const convertirSearchCliente = (
+export const convertirSearchNotebook = (
   datos: queryString.ParsedQuery<string>
-): IClientFormSearch => {
+): INotebookCreate => {
   return {
-    dni: datos.dni !== null && datos.dni ? datos.dni.toString() : '',
-    nombre: datos.nombre !== null && datos.nombre ? datos.nombre.toString() : '',
-    apellido: datos.apellido !== null && datos.apellido ? datos.apellido.toString() : '',
-    sexo: datos.sexo !== null && datos.sexo ? datos.sexo.toString() : '',
+    disco_rigido_id:
+      datos.disco_rigido_id && datos.disco_rigido_id !== null ? Number(datos.disco_rigido_id) : 0,
+    marca: datos.marca && datos.marca !== null ? datos.marca.toString() : '',
+    memoria: datos.memoria && datos.memoria !== null ? datos.memoria.toString() : '',
+    modelo: datos.modelo && datos.modelo !== null ? datos.modelo.toString() : '',
+    placa_video:
+      datos.placa_video && datos.placa_video !== null ? datos.placa_video.toString() : '',
+    precio: datos.precio && datos.precio !== null ? Number(datos.precio) : 0,
   };
 };
 

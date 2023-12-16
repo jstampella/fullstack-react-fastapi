@@ -77,7 +77,7 @@ export default function LayoutApp({ children }: Props) {
   const [open, setOpen] = React.useState(true);
   const { notify } = useNotify();
   const { startLogout } = useAuthStore();
-  const { errorMessage, records } = useAppSelector((state) => state.client);
+  const { errorMessage, records } = useAppSelector((state) => state.notebook);
   const toggleDrawer = () => {
     setOpen(!open);
   };
@@ -108,7 +108,7 @@ export default function LayoutApp({ children }: Props) {
             <GiHamburgerMenu />
           </IconButton>
           <Typography component='h1' variant='h6' color='inherit' noWrap sx={{ flexGrow: 1 }}>
-            ABM USUARIO
+            ABM NOTEBOOK
           </Typography>
           <Tooltip title='Ultimos registros'>
             <IconButton color='inherit'>

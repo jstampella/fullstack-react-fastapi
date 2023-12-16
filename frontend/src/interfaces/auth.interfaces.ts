@@ -5,7 +5,7 @@ export enum Roles {
 }
 
 export interface IUserPayload {
-  _id: string;
+  id: string;
   name: string;
   email: string;
   token: string;

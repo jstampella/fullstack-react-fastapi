@@ -8,7 +8,9 @@
     "eslint:recommended",
     "plugin:react/recommended",
     "plugin:@typescript-eslint/recommended",
-    "prettier"
+    "plugin:@typescript-eslint/recommended",
+    "prettier",
+    "plugin:json/recommended"
   ],
   "parser": "@typescript-eslint/parser",
   "parserOptions": {
@@ -18,15 +20,23 @@
     "ecmaVersion": "latest",
     "sourceType": "module"
   },
-  "plugins": ["react", "react-hooks", "prettier", "import"],
+  "plugins": ["react", "react-hooks", "@typescript-eslint", "prettier", "import", "json"],
   "rules": {
+    "json/*": ["error", { "allowComments": true }],
     "react/jsx-uses-react": ["off"],
     "react/jsx-props-no-spreading": "off",
     "react/no-unescaped-entities": ["off"],
     "@typescript-eslint/no-use-before-define": ["error"],
     "react/jsx-filename-extension": ["warn", { "extensions": [".tsx"] }],
     "react/react-in-jsx-scope": "off",
-    "camelcase": "error",
+    "camelcase": [
+      "error",
+      {
+        "ignoreDestructuring": true,
+        "properties": "never",
+        "ignoreGlobals": true
+      }
+    ],
     "@typescript-eslint/no-explicit-any": "error",
     "@typescript-eslint/no-unused-vars": "warn",
     "no-unused-vars": "off",
@@ -69,6 +79,5 @@
     "react": {
       "version": "detect"
     }
-  },
-  "ignorePatterns": ["../.eslintrc"]
+  }
 }

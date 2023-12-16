@@ -1,4 +1,4 @@
-from app.models.ErrorResponse import MiExcepcion
+from app.models.common import MiExcepcion
 from app.models.user import UserModel
 from sqlalchemy.orm import class_mapper
 import base64

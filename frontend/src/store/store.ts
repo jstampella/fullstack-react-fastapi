@@ -1,11 +1,11 @@
 import { configureStore } from '@reduxjs/toolkit';
 import { authSlice } from './auth';
 import { appStateSlice } from './ui';
-import { clientSlice } from './client';
+import { notebookSlice } from './notebook';
 export const store = configureStore({
   reducer: {
     auth: authSlice.reducer,
-    client: clientSlice.reducer,
+    notebook: notebookSlice.reducer,
     appState: appStateSlice.reducer,
   },
 });

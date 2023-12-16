@@ -45,15 +45,20 @@ export const useForm = <T extends { [key: string]: number | string }>(
         target:
           | (EventTarget & HTMLInputElement)
           | (EventTarget & {
-              value: string;
+              value: string | number;
               name: string;
-            });
+            })
+            | {
+              value: string | number;
+              name: string;
+            }
       }) => {
     const { name, value } = target;
     setFormState({
       ...formState,
       [name]: value,
     });
+    
     setIsSubmit(true);
   };
 

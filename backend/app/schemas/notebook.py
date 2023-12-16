@@ -1,4 +1,4 @@
-from typing import Optional
+from typing import Optional, List
 from pydantic import BaseModel
 
 class NotebookSchema(BaseModel):
@@ -17,3 +17,10 @@ class NotebookUpdateSchema(BaseModel):
     disco_rigido_id: Optional[int] = None
     placa_video: Optional[str] = None
     precio: Optional[float] = None
+
+
+class NotebookPaginationSchema(BaseModel):
+  data: List[NotebookSchema]
+  total: int
+  limit: int
+  page: int

@@ -2,32 +2,25 @@ import { useEffect, useState } from 'react';
 import queryString from 'query-string';
 import CustomizedTables, { IHeaders } from '../../components/CustomizedTable';
 import { AiFillDelete, AiFillEdit, AiOutlineReload } from 'react-icons/ai';
-import { IClient, IClientPagination } from '../../interfaces';
-import { useClientStore } from '../../hooks/useClientStore';
 import { Box, IconButton, TablePagination } from '@mui/material';
 import { SimpleDialogResult } from '../../components/DialogResult';
 import { useDispatch } from 'react-redux';
-import { onChangeStatus, onSelect, statusClient } from '../../store/client';
-import { useNotify } from '../../hooks';
+import { useNotebookStore, useNotify } from '../../hooks';
 import { useLocation, useNavigate } from 'react-router-dom';
-import { SearchClient } from '../../components/SearchClient';
-import { convertirSearchCliente } from '../../utils/common';
+import { SearchNotebook, formInit } from '../../components/SearchNotebook';
+import { convertirSearchNotebook } from '../../utils/common';
+import { INotebook, INotebookPagination } from '../../interfaces';
+import { onChangeStatus, statusNotebook, onSelect } from '../../store/notebook';
 
-const formInit = {
-  dni: '',
-  nombre: '',
-  apellido: '',
-  sexo: '',
-};
-
-export const ClientsPage = (): JSX.Element => {
+export const NotebooksPage = (): JSX.Element => {
   const [clientParams, setClientParams] = useState(formInit);
-  const { getClients, deleteClient, listClients, status, getSearchClient } = useClientStore();
+  const { getNotebooks, listNotebooks, status, getSearchNotebook, deleteNotebook } =
+    useNotebookStore();
   const dispatch = useDispatch();
   const { notify } = useNotify();
   const navigate = useNavigate();
   const location = useLocation();
-  const [listado, setlistado] = useState<IClientPagination>({
+  const [listado, setlistado] = useState<INotebookPagination>({
     total: 1,
     limit: 5,
     page: 0,
@@ -38,34 +31,34 @@ export const ClientsPage = (): JSX.Element => {
   const [openDelete, setopenDelete] = useState<boolean>(false);
 
   const cargarLista = async (payload: { page?: number; limit?: number }) => {
-    const list = await getClients(payload);
+    const list = await getNotebooks(payload);
     setlistado((old) => ({ ...old, isLoading: false, ...list }));
   };
 
   useEffect(() => {
     setlistado((old) => ({ ...old, isLoading: true }));
-    if (listClients.data.length === 0) cargarLista({});
-    else setlistado((old) => ({ ...old, isLoading: false, ...listClients }));
-    dispatch(onChangeStatus(statusClient.list));
+    if (listNotebooks.data.length === 0) cargarLista({});
+    else setlistado((old) => ({ ...old, isLoading: false, ...listNotebooks }));
+    dispatch(onChangeStatus(statusNotebook.list));
   }, []);
 
   useEffect(() => {
-    if (status === statusClient.search) {
-      setlistado((old) => ({ ...old, isLoading: false, ...listClients }));
-      if (listClients.data.length === 0) notify('No se encontraron resultados.', 'warning');
+    if (status === statusNotebook.search) {
+      setlistado((old) => ({ ...old, isLoading: false, ...listNotebooks }));
+      if (listNotebooks.data.length === 0) notify('No se encontraron resultados.', 'warning');
     }
-    if (status === statusClient.clear) {
+    if (status === statusNotebook.clear) {
       cargarLista({});
     }
-    if (status === statusClient.checking) setlistado((old) => ({ ...old, isLoading: true }));
-    if (status === statusClient.ok)
-      setlistado((old) => ({ ...old, isLoading: false, ...listClients }));
+    if (status === statusNotebook.checking) setlistado((old) => ({ ...old, isLoading: true }));
+    if (status === statusNotebook.ok)
+      setlistado((old) => ({ ...old, isLoading: false, ...listNotebooks }));
   }, [status]);
 
   useEffect(() => {
     if (
-      Number(listado.page) !== Number(listClients.page) ||
-      Number(listado.limit) !== Number(listClients.limit)
+      Number(listado.page) !== Number(listNotebooks.page) ||
+      Number(listado.limit) !== Number(listNotebooks.limit)
     ) {
       setlistado((old) => ({ ...old, isLoading: true }));
       cargarLista({ page: listado.page, limit: listado.limit });
@@ -74,32 +67,32 @@ export const ClientsPage = (): JSX.Element => {
 
   useEffect(() => {
     if (location.search !== '' && location.search) {
-      getSearchClient(location.search);
+      getSearchNotebook(location.search);
       const params = queryString.parse(location.search);
-      setClientParams(convertirSearchCliente(params));
-    } else if (status !== statusClient.list) {
+      setClientParams(convertirSearchNotebook(params));
+    } else if (status !== statusNotebook.list) {
       setClientParams(formInit);
       cargarLista({});
     }
   }, [location]);
 
-  const deleteDialog = async (row: IClient) => {
+  const deleteDialog = async (row: INotebook) => {
     dispatch(onSelect(row));
-    setmessageDelete(`Deseas eliminar al usuario ${row.nombre} ${row.apellido}`);
+    setmessageDelete(`Deseas eliminar la notebook ${row.nombre} ${row.apellido}`);
     setopenDelete(true);
   };
 
-  const editDialog = async (row: IClient) => {
+  const editDialog = async (row: INotebook) => {
     dispatch(onSelect(row));
-    dispatch(onChangeStatus(statusClient.edit));
-    navigate(`/add-client/${row._id}`);
+    dispatch(onChangeStatus(statusNotebook.edit));
+    navigate(`/add-notebook/${row.id}`);
   };
 
   const confirmDeleteUser = (value: boolean): void => {
     if (value) {
-      deleteClient().then(() => {
-        notify('Cliente eliminado correctamente', 'success');
-        dispatch(onChangeStatus(statusClient.ok));
+      deleteNotebook().then(() => {
+        notify('Notebook eliminado correctamente', 'success');
+        dispatch(onChangeStatus(statusNotebook.ok));
       });
     } else {
       dispatch(onSelect(null));
@@ -121,13 +114,13 @@ export const ClientsPage = (): JSX.Element => {
     setlistado((old) => ({ ...old, page }));
   };
 
-  const headers: IHeaders<IClient>[] = [
-    { id: 'id', display: '#' },
-    { id: 'dni', display: 'DNI' },
-    { id: 'nombre', display: 'Nombre' },
-    { id: 'apellido', display: 'Apellido' },
-    { id: 'sexo', display: 'Sexo' },
-    { id: 'telefono', display: 'Telefono' },
+  const headers: IHeaders<INotebook>[] = [
+    { id: 'position', display: '#' },
+    { id: 'marca', display:'Marca'},
+    { id: 'modelo', display:'Modelo'},
+    { id: 'memoria', display:'Memoria'},
+    { id: 'placa_video', display:'P. de Video'},
+    { id: 'precio', display:'Precio'},
     { id: 'edit', display: <AiFillEdit />, action: editDialog },
     { id: 'delete', display: <AiFillDelete />, action: deleteDialog },
   ];
@@ -147,7 +140,7 @@ export const ClientsPage = (): JSX.Element => {
           alignContent: 'flex-start',
         }}
       >
-        <SearchClient clientParams={clientParams} />
+        <SearchNotebook clientParams={clientParams} />
         <CustomizedTables
           isLoading={listado.isLoading}
           sx={{ maxHeight: '440px' }}
@@ -166,13 +159,13 @@ export const ClientsPage = (): JSX.Element => {
         <SimpleDialogResult
           open={openDelete}
           message={messageDelete}
-          title={'Eliminar Usuario'}
+          title={'Eliminar Notebook'}
           onClose={confirmDeleteUser}
         />
         <IconButton
           color='inherit'
           sx={{ ':hover': { color: 'background.paper' }, marginTop: '5px' }}
-          onClick={() => dispatch(onChangeStatus(statusClient.clear))}
+          onClick={() => dispatch(onChangeStatus(statusNotebook.clear))}
         >
           <AiOutlineReload />
         </IconButton>

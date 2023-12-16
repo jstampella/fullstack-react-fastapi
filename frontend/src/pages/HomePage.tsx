@@ -1,16 +1,16 @@
 import { Box, Typography } from '@mui/material';
-import CardClient from '../components/CardClient';
+import CardNotebook from '../components/CardNotebook';
 import { useEffect, useState } from 'react';
-import { useClientStore } from '../hooks/useClientStore';
-import { IClient } from '../interfaces';
+import { INotebook } from '../interfaces';
 import { AiOutlineLoading } from 'react-icons/ai';
+import { useNotebookStore } from '../hooks';
 
 export const HomePage = (): JSX.Element => {
-  const { getClientByUser } = useClientStore();
-  const [recordsList, setRecordsList] = useState<IClient[] | undefined>(undefined);
+  const { getNotebookByUser } = useNotebookStore();
+  const [recordsList, setRecordsList] = useState<INotebook[] | undefined>(undefined);
 
   const records = async () => {
-    const list = await getClientByUser();
+    const list = await getNotebookByUser();
     setRecordsList(list);
   };
   useEffect(() => {
@@ -24,17 +24,15 @@ export const HomePage = (): JSX.Element => {
         {recordsList ? (
           recordsList.length > 0 ? (
             recordsList.map((item) => (
-              <CardClient
-                apellido={item.apellido}
-                dni={item.dni.toString()}
-                nombre={item.nombre}
-                url={`/add-client/${item._id}`}
-                key={item._id}
+              <CardNotebook
+                {...item}
+                url={`/add-notebook/${item.id}`}
+                key={item.id}
               />
             ))
           ) : (
             <Box sx={{ p: 3, m: 2, backgroundColor: 'primary.main', color: 'background.default' }}>
-              Aun no tienes clientes registrados!
+              Aun no tienes notebook registradas!
             </Box>
           )
         ) : (

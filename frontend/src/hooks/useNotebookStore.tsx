@@ -1,5 +1,4 @@
 import { useDispatch } from 'react-redux';
-import { IClient, IClientCreate, IClientPagination } from '../interfaces/client.interfaces';
 import { useAppSelector } from '.';
 import {
   onChangePage,
@@ -13,37 +12,40 @@ import {
   onSelect,
   onSetError,
   onUpdate,
-  statusClient,
-} from '../store/client';
+  statusNotebook,
+} from '../store/notebook';
+import { INotebook, INotebookCreate, INotebookPagination } from '../interfaces';
 import {
-  createClientApi,
-  deleteClientApi,
-  getAllClientsApi,
-  getClientByIdApi,
-  getClientByUserApi,
-  getClientSearchApi,
-  updateClientApi,
-} from '../api/client.api';
+  createNotebookApi,
+  deleteNotebookApi,
+  getAllNotebooksApi,
+  getNotebookByIdApi,
+  getNotebookByUserApi,
+  getNotebookSearchApi,
+  updateNotebookApi,
+} from '../api/notebook.api';
 
-export const useClientStore = () => {
-  const { status, errorMessage, client, listClients } = useAppSelector((state) => state.client);
+export const useNotebookStore = () => {
+  const { status, errorMessage, notebook, listNotebooks } = useAppSelector(
+    (state) => state.notebook
+  );
   const dispatch = useDispatch();
 
-  const getClients = async ({
+  const getNotebooks = async ({
     page,
     limit,
   }: {
     page?: number;
     limit?: number;
-  }): Promise<IClientPagination | undefined> => {
-    dispatch(onChangeStatus(statusClient.checking));
+  }): Promise<INotebookPagination | undefined> => {
+    dispatch(onChangeStatus(statusNotebook.checking));
     try {
-      const pag = page ?? listClients.page;
-      const lim = limit || listClients.limit;
-      const list = await getAllClientsApi(pag, lim);
+      const pag = page ?? listNotebooks.page;
+      const lim = limit || listNotebooks.limit;
+      const list = await getAllNotebooksApi(pag, lim);
       list.data.forEach((element, index) => {
         const sum = list.page * list.limit;
-        element.id = index + 1 + sum;
+        element.position = index + 1 + sum;
       });
       dispatch(onList(list));
       return list;
@@ -55,12 +57,12 @@ export const useClientStore = () => {
     }
   };
 
-  const deleteClient = async () => {
+  const deleteNotebook = async () => {
     dispatch(onChangeStatus());
     try {
-      const { _id } = client ?? {};
-      if (!_id) throw new Error('Hubo un problema para obtener el id del cliente');
-      await deleteClientApi(_id);
+      const { id } = notebook ?? {};
+      if (!id) throw new Error('Hubo un problema para obtener el id del notebooke');
+      await deleteNotebookApi(id);
       dispatch(onDelete());
     } catch (error) {
       dispatch(onSetError((error as Error).message));
@@ -70,10 +72,10 @@ export const useClientStore = () => {
     }
   };
 
-  const createClient = async (client: IClientCreate) => {
-    dispatch(onChangeStatus(statusClient.saving));
+  const createNotebook = async (notebook: INotebookCreate) => {
+    dispatch(onChangeStatus(statusNotebook.saving));
     try {
-      const res = await createClientApi(client);
+      const res = await createNotebookApi(notebook);
       dispatch(onCreate(res));
     } catch (error) {
       dispatch(onSetError((error as Error).message));
@@ -82,12 +84,12 @@ export const useClientStore = () => {
       }, 4000);
     }
   };
-  const updateclient = async (upClient: IClientCreate) => {
-    dispatch(onChangeStatus(statusClient.saving));
-    const { _id } = client ?? {};
-    if (!_id) throw new Error('Hubo un problema para obtener el id del cliente');
+  const updatenotebook = async (upNotebook: INotebookCreate) => {
+    dispatch(onChangeStatus(statusNotebook.saving));
+    const { id } = notebook ?? {};
+    if (!id) throw new Error('Hubo un problema para obtener el id del notebook');
     try {
-      const res = await updateClientApi(_id, upClient);
+      const res = await updateNotebookApi(id, upNotebook);
       dispatch(onUpdate(res));
     } catch (error) {
       dispatch(onSetError((error as Error).message));
@@ -97,12 +99,12 @@ export const useClientStore = () => {
     }
   };
 
-  const getClient = async (id: string) => {
-    dispatch(onChangeStatus(statusClient.checking));
+  const getNotebook = async (id: number) => {
+    dispatch(onChangeStatus(statusNotebook.checking));
     try {
-      const res = await getClientByIdApi(id);
+      const res = await getNotebookByIdApi(id);
       dispatch(onSelect(res));
-      dispatch(onChangeStatus(statusClient.edit));
+      dispatch(onChangeStatus(statusNotebook.edit));
     } catch (error) {
       dispatch(onSetError((error as Error).message));
       setTimeout(() => {
@@ -115,10 +117,10 @@ export const useClientStore = () => {
     dispatch(onChangePage(payload));
   };
 
-  const getSearchClient = async (search: string) => {
-    dispatch(onChangeStatus(statusClient.checking));
+  const getSearchNotebook = async (search: string) => {
+    dispatch(onChangeStatus(statusNotebook.checking));
     try {
-      const list = await getClientSearchApi(search);
+      const list = await getNotebookSearchApi(search);
       list.data.forEach((element, index) => {
         const sum = list.page * list.limit;
         element.id = index + 1 + sum;
@@ -132,10 +134,10 @@ export const useClientStore = () => {
     }
   };
 
-  const getClientByUser = async (): Promise<IClient[] | undefined> => {
-    dispatch(onChangeStatus(statusClient.checking));
+  const getNotebookByUser = async (): Promise<INotebook[] | undefined> => {
+    dispatch(onChangeStatus(statusNotebook.checking));
     try {
-      const list = await getClientByUserApi();
+      const list = await getNotebookByUserApi();
       dispatch(onRecords(list));
       return list;
     } catch (error) {
@@ -150,16 +152,16 @@ export const useClientStore = () => {
     // propiedades
     status,
     errorMessage,
-    listClients,
-    client,
+    listNotebooks,
+    notebook,
     // metodos
-    getClients,
-    deleteClient,
-    createClient,
-    getClient,
-    updateclient,
+    getNotebooks,
+    deleteNotebook,
+    createNotebook,
+    getNotebook,
+    updatenotebook,
     changePage,
-    getSearchClient,
-    getClientByUser,
+    getSearchNotebook,
+    getNotebookByUser,
   };
 };

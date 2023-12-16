@@ -13,6 +13,8 @@ services:
       - ./backend/app:/code/app
     ports:
       - "8000:3000"
+    depends_on:
+      - database_lab4
     environment:
       - DATABASE_URL=postgresql://hello_fastapi:hello_fastapi@database_lab4/db_lab4
     networks:

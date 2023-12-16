@@ -1,37 +1,43 @@
 import { validarNumeros, validarSoloLetras } from '../utils/common';
 
 export const formValidations: { [key: string]: [(data: string | number) => boolean, string] } = {
-  nombre: [
+  marca: [
     (data: string | number) => {
       return typeof data === 'string' ? data.length >= 3 && validarSoloLetras(data) : false;
     },
-    'El nombre no puede estar vacio -> min 3 caracteres',
+    'La marca no puede estar vacio -> min 3 caracteres',
   ],
-  apellido: [
+  modelo: [
     (data: string | number) => {
-      return typeof data === 'string' ? data.length >= 3 && validarSoloLetras(data) : false;
+      return typeof data === 'string' ? data.length >= 3 && data.length >= 2 : false;
     },
-    'El apellido no puede estar vacio -> min 3 caracteres',
+    'El modelo no puede estar vacio -> min 3 caracteres',
   ],
-  dni: [
+  disco_rigido_id: [
     (data: string | number) => {
-      return typeof data === 'string' ? data.length >= 6 && validarNumeros(data) : false;
+      return typeof data === 'number' ? data >= 1 : false;
     },
-    'dni debe ser solo numeros -> min 6 digitos',
+    'Debe estar seleccionado un disco',
   ],
-  sexo: [
+  memoria: [
     (data: string | number) => {
       return typeof data === 'string'
-        ? data.toLowerCase().includes('m') || data.toLowerCase().includes('f')
+        ? data.length >= 4
         : false;
     },
     'debes seleccionar un sexo',
   ],
-  telefono: [
+  placa_video: [
     (data: string | number) => {
-      return typeof data === 'string' ? (validarNumeros(data) && data.length >= 8) || !data : false;
+      return typeof data === 'string' ? data.length >= 3 || !data : false;
     },
     'telefono debe ser solo numeros y minimo 8 digitos',
+  ],
+  precio: [
+    (data: string | number) => {
+      return typeof data === 'string' ? data.length >= 3 && validarNumeros(data) : false;
+    },
+    'precio debe ser solo numeros y minimo 3 digitos',
   ],
   // Agrega más validaciones de acuerdo a tus necesidades
 };
@@ -39,26 +45,22 @@ export const formValidations: { [key: string]: [(data: string | number) => boole
 export const formValidationsSearch: {
   [key: string]: [(data: string | number) => boolean, string];
 } = {
-  nombre: [
+  marca: [
     (data: string | number) => {
-      return typeof data === 'string'
-        ? (data.length > 0 && validarSoloLetras(data)) || !data
-        : false;
+      return typeof data === 'string' ? data.length >= 3 && validarSoloLetras(data) || !data  : false;
     },
-    'El nombre debe ser solo letras',
+    'La marca no puede estar vacio -> min 3 caracteres',
   ],
-  apellido: [
+  modelo: [
     (data: string | number) => {
-      return typeof data === 'string'
-        ? (data.length > 0 && validarSoloLetras(data)) || !data
-        : false;
+      return typeof data === 'string' ? data.length >= 3 || !data  : false;
     },
-    'El apellido debe ser solo letras',
+    'El modelo no puede estar vacio -> min 3 caracteres',
   ],
-  dni: [
+  placa_video: [
     (data: string | number) => {
-      return typeof data === 'string' ? validarNumeros(data) || !data : false;
+      return typeof data === 'string' ? data.length >= 3 || !data : false;
     },
-    'dni debe ser solo numeros',
+    'telefono debe ser solo numeros y minimo 8 digitos',
   ],
 };

@@ -15,17 +15,17 @@ export const mainListItems = (
       </ListItemIcon>
       <ListItemText primary='Principal' />
     </ListItemButton>
-    <ListItemButton component={Link} to='/add-client'>
+    <ListItemButton component={Link} to='/add-notebook'>
       <ListItemIcon sx={{ color: 'inherit' }}>
         <FaShopify />
       </ListItemIcon>
-      <ListItemText primary='Alta Usuario' />
+      <ListItemText primary='Alta Notebook' />
     </ListItemButton>
-    <ListItemButton component={Link} to='/clients'>
+    <ListItemButton component={Link} to='/notebooks'>
       <ListItemIcon sx={{ color: 'inherit' }}>
         <BsFillPeopleFill />
       </ListItemIcon>
-      <ListItemText primary='Buscar Usuario' />
+      <ListItemText primary='Buscar Notebook' />
     </ListItemButton>
   </React.Fragment>
 );

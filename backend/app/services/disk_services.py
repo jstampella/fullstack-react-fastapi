@@ -1,5 +1,5 @@
 
-from app.models.ErrorResponse import MiExcepcion
+from app.models.common import MiExcepcion
 from app.models.disk import DiskModel
 from app.schemas.disk import DiskSchema
 from sqlalchemy.orm import Session
@@ -33,7 +33,7 @@ async def get_disks(db: Session):
             disk_dict.pop('_sa_instance_state', None)
             serialized_disks.append(disk_dict)
         # Return the serialized_disks as a JSONResponse
-        return JSONResponse(serialized_disks)
+        return serialized_disks
     except MiExcepcion as e:
         raise MiExcepcion(**e.__dict__)
     except Exception as e:

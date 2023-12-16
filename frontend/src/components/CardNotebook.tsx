@@ -4,25 +4,23 @@ import CardContent from '@mui/material/CardContent';
 import Typography from '@mui/material/Typography';
 import { Link as RouterLink } from 'react-router-dom';
 import { Link } from '@mui/material';
+import { INotebookCreate } from '../interfaces';
 
-interface Props {
-  dni: string;
-  nombre: string;
-  apellido: string;
+interface IProps extends Partial<INotebookCreate> {
   url: string;
 }
 
-export default function CardClient({ dni, nombre, apellido, url }: Props) {
+export default function CardNotebook({ disco_rigido_id, marca,memoria,modelo,placa_video,precio, url }: IProps) {
   return (
     <Card sx={{ minWidth: 100, maxWidth: 300, flex: 1 }}>
       <CardContent sx={{ paddingBottom: 0 }}>
         <Typography sx={{ fontSize: 14 }} color='text.secondary' gutterBottom>
-          DNI: {dni}
+          Marca: {marca}
         </Typography>
         <Typography variant='h5' component='div'>
-          Apellido: {apellido}
+          Modelo: {modelo}
         </Typography>
-        <Typography color='text.secondary'>Nombre: {nombre}</Typography>
+        <Typography color='text.secondary'>Memoria: {memoria}</Typography>
       </CardContent>
       <CardActions sx={{ justifyContent: 'flex-end' }} color='background.default'>
         <Link component={RouterLink} color={'inherit'} to={url} sx={{ pr: 2 }}>
