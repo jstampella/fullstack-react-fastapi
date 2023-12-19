@@ -43,8 +43,12 @@ export const notebookSlice = createSlice({
     onUpdate: (state, { payload }: PayloadAction<INotebook>) => {
       state.errorMessage = null;
       state.listNotebooks.data = state.listNotebooks.data.map((item: INotebook) =>
-        item.dni === payload.dni ? payload : item
+        item.id === payload.id ? payload : item
       );
+      state.records = state.records && state.records.map((item: INotebook) =>
+        item.id === payload.id ? payload : item
+      );
+      state.notebook = payload;
       state.status = statusNotebook.saved;
     },
     onCreate: (state, { payload }: PayloadAction<INotebook>) => {
@@ -60,7 +64,7 @@ export const notebookSlice = createSlice({
     onDelete: (state) => {
       state.errorMessage = null;
       state.listNotebooks.data = state.listNotebooks.data.filter(
-        (item: INotebook) => item.dni !== state.notebook?.dni
+        (item: INotebook) => item.id !== state.notebook?.id
       );
       state.notebook = null;
       state.status = statusNotebook.deleted;

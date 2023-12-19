@@ -8,7 +8,7 @@ import { useDispatch } from 'react-redux';
 import { useNotebookStore, useNotify } from '../../hooks';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { SearchNotebook, formInit } from '../../components/SearchNotebook';
-import { convertirSearchNotebook } from '../../utils/common';
+import { convertToPrice, convertirSearchNotebook } from '../../utils/common';
 import { INotebook, INotebookPagination } from '../../interfaces';
 import { onChangeStatus, statusNotebook, onSelect } from '../../store/notebook';
 
@@ -78,7 +78,7 @@ export const NotebooksPage = (): JSX.Element => {
 
   const deleteDialog = async (row: INotebook) => {
     dispatch(onSelect(row));
-    setmessageDelete(`Deseas eliminar la notebook ${row.nombre} ${row.apellido}`);
+    setmessageDelete(`Deseas eliminar la notebook ${row.marca} ${row.modelo}`);
     setopenDelete(true);
   };
 
@@ -114,13 +114,17 @@ export const NotebooksPage = (): JSX.Element => {
     setlistado((old) => ({ ...old, page }));
   };
 
-  const headers: IHeaders<INotebook>[] = [
+  interface IExtendINotebook extends INotebook {
+    edit?: string;
+    delete?: string;
+  }
+  const headers: IHeaders<IExtendINotebook, (row: INotebook) => void>[]  = [
     { id: 'position', display: '#' },
     { id: 'marca', display:'Marca'},
     { id: 'modelo', display:'Modelo'},
     { id: 'memoria', display:'Memoria'},
     { id: 'placa_video', display:'P. de Video'},
-    { id: 'precio', display:'Precio'},
+    { id: 'precio', display:'Precio', custom:(e)=>convertToPrice(Number(e))},
     { id: 'edit', display: <AiFillEdit />, action: editDialog },
     { id: 'delete', display: <AiFillDelete />, action: deleteDialog },
   ];

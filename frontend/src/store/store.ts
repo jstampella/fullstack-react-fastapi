@@ -2,10 +2,12 @@ import { configureStore } from '@reduxjs/toolkit';
 import { authSlice } from './auth';
 import { appStateSlice } from './ui';
 import { notebookSlice } from './notebook';
+import { diskSlice } from './disk';
 export const store = configureStore({
   reducer: {
     auth: authSlice.reducer,
     notebook: notebookSlice.reducer,
+    disk: diskSlice.reducer,
     appState: appStateSlice.reducer,
   },
 });

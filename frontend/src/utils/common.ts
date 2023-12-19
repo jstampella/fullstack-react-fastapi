@@ -8,8 +8,13 @@ import { INotebookCreate } from '../interfaces';
  * @param str  string para validar
  * @returns boolean
  */
-export const validarNumeros = (str: string): boolean => {
-  const numerosRegex = /^[0-9]+$/;
+export const validarNumeros = (str: string, decimal: string | undefined = undefined): boolean => {
+  let numerosRegex: RegExp = /^[0-9]+$/;
+
+  if (decimal) {
+    numerosRegex = new RegExp(`^[0-9,${decimal}]+$`);
+  }
+
   return numerosRegex.test(str);
 };
 
@@ -50,6 +55,7 @@ export const convertirSearchNotebook = (
     placa_video:
       datos.placa_video && datos.placa_video !== null ? datos.placa_video.toString() : '',
     precio: datos.precio && datos.precio !== null ? Number(datos.precio) : 0,
+    urlImage: datos.urlImage && datos.urlImage !==null ? datos.urlImage.toString() : ''
   };
 };
 
@@ -98,3 +104,14 @@ export const removeUndefinedAndEmptyProperties = <T>(obj: T): T => {
   }
   return newObj;
 };
+
+
+export const convertToPrice = (precio: number | undefined) => {
+  try {
+    if(!precio) return 'Sin Precio'
+    const precioFormateado = precio.toLocaleString('es-AR', { style: 'currency', currency: 'ARS' });
+    return precioFormateado
+  } catch (error) {
+    return 'Sin Precio'
+  }
+}

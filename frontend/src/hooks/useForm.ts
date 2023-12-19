@@ -1,18 +1,20 @@
 import { useEffect, useMemo, useState } from 'react';
 
-export const useForm = <T extends { [key: string]: number | string }>(
+export const useForm = <T extends { [key: string]: number | string | string[] | undefined | null }>(
   initialForm: T,
-  formValidations: { [key: string]: [(data: string | number) => boolean, string] } = {}
+  formValidations: {
+    [key: string]: [(data: string | number | string[] | undefined | null) => boolean, string];
+  } = {}
 ) => {
   const [formState, setFormState] = useState<T>(initialForm);
-  const [isSubmit, setIsSubmit] = useState(false);
+  const [isModified, setIsModified] = useState(false);
   const [formValidation, setFormValidation] = useState<{ [key: string]: string | number | null }>(
     {}
   );
 
   const createValidators = () => {
     const formCheckedValues: { [key: string]: string | number | null } = {};
-    if (formState && typeof formState === 'object' && isSubmit) {
+    if (formState && typeof formState === 'object' && isModified) {
       for (const formField of Object.keys(formValidations)) {
         const [fn, errorMessage = 'Este campo es requerido.'] = formValidations[formField];
         formCheckedValues[`${formField}Valid`] =
@@ -27,6 +29,7 @@ export const useForm = <T extends { [key: string]: number | string }>(
   }, [formState]);
 
   useEffect(() => {
+    setIsModified(false);
     setFormState(initialForm);
   }, [initialForm]);
 
@@ -37,6 +40,18 @@ export const useForm = <T extends { [key: string]: number | string }>(
     return true;
   }, [formValidation]);
 
+  const isModificated = (name: string, value: string | string[]) => {
+    if (initialForm[name] !== value) {
+      return true;
+    }
+    for (const key in formState) {
+      if (formState[key] !== initialForm[key] && key !== name) {
+        return true;
+      }
+    }
+    return false;
+  };
+
   const onInputChange = ({
     target,
   }:
@@ -45,26 +60,26 @@ export const useForm = <T extends { [key: string]: number | string }>(
         target:
           | (EventTarget & HTMLInputElement)
           | (EventTarget & {
-              value: string | number;
+              value: string | string[];
               name: string;
             })
-            | {
-              value: string | number;
+          | {
+              value: string | string[];
               name: string;
-            }
+            };
       }) => {
     const { name, value } = target;
     setFormState({
       ...formState,
       [name]: value,
     });
-    
-    setIsSubmit(true);
+
+    setIsModified(isModificated(name, value));
   };
 
-  const onResetForm = () => {
-    setIsSubmit(false);
-    setFormState(initialForm);
+  const onResetForm = (formData?: T) => {
+    setIsModified(false);
+    setFormState(formData ?? initialForm);
   };
 
   return {
@@ -74,6 +89,7 @@ export const useForm = <T extends { [key: string]: number | string }>(
     onResetForm,
     ...formValidation,
     isFormValid,
-    isSubmit,
+    isModified,
+    setIsModified,
   };
 };

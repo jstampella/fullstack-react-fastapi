@@ -43,7 +43,7 @@ export const lightTheme = createTheme({
       primary: colorConfigs.color5,
       secondary: colorConfigs.color6,
     },
-    success: { main: '#2d9b33' },
+    success: { main: '#00ff39' },
   },
   breakpoints: breakpoints,
   typography: typography,
@@ -52,13 +52,13 @@ export const lightTheme = createTheme({
 export const darkTheme = createTheme({
   palette: {
     mode: 'dark',
-    primary: { main: colorConfigs.color3, light: colorConfigs.color2 },
+    primary: { main: colorConfigs.color4, light: colorConfigs.color3 },
     secondary: { main: colorConfigs.color1 },
     background: { default: colorConfigs.color6, paper: colorConfigs.color1 },
     text: {
-      disabled: colorConfigs.color4,
-      primary: colorConfigs.color4,
-      secondary: colorConfigs.color4,
+      disabled: colorConfigs.color2,
+      primary: colorConfigs.color6,
+      secondary: colorConfigs.color6,
     },
     success: { main: '#2d9b33' },
   },

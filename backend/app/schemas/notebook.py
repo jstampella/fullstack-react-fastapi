@@ -7,7 +7,7 @@ class NotebookSchema(BaseModel):
     modelo: str
     memoria: str
     disco_rigido_id: int
-    placa_video: str
+    placa_video: Optional[str] = None
     precio: float
 
 class NotebookUpdateSchema(BaseModel):
@@ -19,8 +19,12 @@ class NotebookUpdateSchema(BaseModel):
     precio: Optional[float] = None
 
 
+class NotebookSearchSchema(NotebookUpdateSchema):
+    limit: Optional[int] = None
+    page: Optional[int] = None
+
 class NotebookPaginationSchema(BaseModel):
-  data: List[NotebookSchema]
-  total: int
-  limit: int
-  page: int
+    data: List[NotebookSchema]
+    total: int
+    limit: int
+    page: int

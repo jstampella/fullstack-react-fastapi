@@ -91,7 +91,7 @@ export const getNotebookByIdApi = async (id: number): Promise<INotebook> => {
 
 export const getNotebookByUserApi = async (): Promise<INotebook[]> => {
   try {
-    const resp: AxiosResponse<ApiResponse> = await axios.get<ApiResponse>('/notebook');
+    const resp: AxiosResponse<ApiResponse> = await axios.get<ApiResponse>('/notebook/user');
     const response: INotebook[] = resp.data.data;
     return response;
   } catch (error: unknown) {

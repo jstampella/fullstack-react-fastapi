@@ -2,12 +2,7 @@
 import {
   Alert,
   Button,
-  FormControl,
-  FormHelperText,
   Grid,
-  InputLabel,
-  MenuItem,
-  Select,
   TextField,
   Box,
   Accordion,
@@ -26,6 +21,7 @@ import { useDispatch } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
 import { INotebookCreate } from '../interfaces';
 import { onChangeStatus, statusNotebook } from '../store/notebook';
+import NotebookExample from "../assets/Notebook-example.png";
 
 export const formInit: INotebookCreate = {
   disco_rigido_id: 1,
@@ -34,6 +30,7 @@ export const formInit: INotebookCreate = {
   modelo: '',
   placa_video: '',
   precio: 0,
+  urlImage: NotebookExample
 };
 
 const stiloInput = {
@@ -66,20 +63,19 @@ interface Props {
 
 export const SearchNotebook = ({ clientParams }: Props) => {
   const { status, errorMessage } = useNotebookStore();
+  const [isEmpty, setisEmpty] = useState(true);
   const [formSubmitted, setFormSubmitted] = useState(false);
   const {
     marca,
     modelo,
-    memoria,
     placa_video,
     marcaValid,
     modeloValid,
-    memoriaValid,
     placa_videoValid,
     isFormValid,
     onInputChange,
     formState,
-    isSubmit,
+    isModified,
     onResetForm,
   } = useForm<INotebookCreate>(clientParams || formInit, formValidationsSearch); // falta el formValidation
   const isSearching = useMemo(() => status === statusNotebook.saving, [status]);
@@ -91,6 +87,15 @@ export const SearchNotebook = ({ clientParams }: Props) => {
   const handleChange = () => {
     setExpanded(!expanded);
   };
+
+  useEffect(() => {
+    if (marca !== '' || modelo !== '' || placa_video !== '') {
+      setisEmpty(false);
+    } else {
+      setisEmpty(true);
+    }
+  }, [marca, modelo, placa_video]);
+  
 
   useEffect(() => {
     if (compartirObjetos<INotebookCreate>(clientParams as INotebookCreate, formInit))
@@ -190,30 +195,6 @@ export const SearchNotebook = ({ clientParams }: Props) => {
                   FormHelperTextProps={{ sx: { color: 'red' } }}
                 />
               </Box>
-              {/* <Box sx={{ m: 1, minWidth: '100px' }}>
-                <FormControl sx={{ ...stiloInput, minWidth: '100px' }} size='small'>
-                  <InputLabel sx={{ marginTop: '6px' }} id='demo-select-small-label'>
-                    Sexo
-                  </InputLabel>
-                  <Select
-                    labelId='demo-select-small-label'
-                    id='demo-select-small'
-                    name='sexo'
-                    value={sexo}
-                    label='Sexo'
-                    onChange={(event) => onInputChange({ target: event.target })}
-                    error={!!sexoValid && formSubmitted}
-                    sx={{ height: '56px' }}
-                  >
-                    <MenuItem value=''>
-                      <em>None</em>
-                    </MenuItem>
-                    <MenuItem value={'F'}>Femenino</MenuItem>
-                    <MenuItem value={'M'}>Masculino</MenuItem>
-                  </Select>
-                  <FormHelperText sx={{ color: 'red' }}>{sexoValid}</FormHelperText>
-                </FormControl>
-              </Box> */}
               <Grid container spacing={2} sx={{ mb: 2, mt: 1 }}>
                 <Grid display={!!errorMessage ? '' : 'none'} item xs={12} sm={12}>
                   <Alert severity='error'>{errorMessage}</Alert>
@@ -226,7 +207,7 @@ export const SearchNotebook = ({ clientParams }: Props) => {
                     <AiFillDelete />
                   </IconButton>
                   <Button
-                    disabled={!isFormValid || !isSubmit || isSearching}
+                    disabled={!isFormValid || !isModified || isSearching || isEmpty}
                     type='submit'
                     variant='contained'
                     fullWidth

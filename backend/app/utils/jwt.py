@@ -8,6 +8,8 @@ from cryptography.hazmat.primitives.kdf.pbkdf2 import PBKDF2HMAC
 from cryptography.hazmat.primitives.kdf.pbkdf2 import PBKDF2HMAC
 import json
 
+from app.schemas.user import DecodeToken
+
 password_provided = "TuTextoUnicoYRaro"  # Este debe ser reemplazado por tu propio texto
 password = password_provided.encode()  # Convertimos el texto a bytes
 
@@ -55,7 +57,7 @@ def encode_token(payload: UserModel):
     return encrypted_password_str
 
 
-def decode_token(token:str):
+def decode_token(token:str) -> DecodeToken:
     try:
         stored_password_bytes = base64.urlsafe_b64decode(token)
         decrypted_password_bytes = fernet.decrypt(stored_password_bytes)

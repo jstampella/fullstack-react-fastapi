@@ -20,7 +20,7 @@ export const HomePage = (): JSX.Element => {
   return (
     <Box margin={2} flexDirection={'column'}>
       <Typography variant='h2'>Tus ultimos registros</Typography>
-      <Box display='flex' gap={2} justifyContent={'center'}>
+      <Box display='flex' gap={2} justifyContent={'center'} sx={{flexDirection: 'row', flexWrap: 'wrap'}}>
         {recordsList ? (
           recordsList.length > 0 ? (
             recordsList.map((item) => (

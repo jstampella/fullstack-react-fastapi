@@ -147,6 +147,8 @@ export const useNotebookStore = () => {
       }, 4000);
     }
   };
+  
+
 
   return {
     // propiedades
