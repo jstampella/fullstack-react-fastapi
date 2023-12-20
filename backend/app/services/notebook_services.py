@@ -6,7 +6,7 @@ from app.models.user import UserModel
 from app.schemas.notebook import NotebookPaginationSchema, NotebookSchema, NotebookUpdateSchema
 from sqlalchemy.orm import Session
 from app.schemas.user import DecodeToken
-from sqlalchemy import or_
+from sqlalchemy import or_, desc
 import types
 
 from app.utils.helpers import safe_int
@@ -51,7 +51,7 @@ async def get_notebooks(db: Session, token: Optional[DecodeToken] = None):
             list_notebook_id =  db.query(UserNotebookModel).filter_by(user_id=userSql.id).all()
             notebook_ids = [notebook.notebook_id for notebook in list_notebook_id]
             # Obtener los objetos NoteBookModel
-            notebooks = db.query(NoteBookModel).filter(NoteBookModel.id.in_(notebook_ids)).all()
+            notebooks = db.query(NoteBookModel).filter(NoteBookModel.id.in_(notebook_ids)).order_by(desc(NoteBookModel.id)).all()
             notebooks = notebooks[:4]
         # Convert DiskModel instances to dictionaries excluding the InstanceState attribute
         serialized_notebooks = []

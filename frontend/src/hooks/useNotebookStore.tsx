@@ -123,7 +123,7 @@ export const useNotebookStore = () => {
       const list = await getNotebookSearchApi(search);
       list.data.forEach((element, index) => {
         const sum = list.page * list.limit;
-        element.id = index + 1 + sum;
+        element.position = index + 1 + sum;
       });
       dispatch(onSearch(list));
     } catch (error) {
