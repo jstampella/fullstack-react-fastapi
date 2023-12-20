@@ -14,7 +14,6 @@ export const loginApi = async (body: payloadLogin): Promise<IUserPayload> => {
   try {
     const resp: AxiosResponse<ApiResponse> = await axios.post<ApiResponse>('/auth', body);
     const response: IUserPayload = resp.data.data;
-    console.log(resp);
     return response;
   } catch (error: unknown) {
     return Promise.reject<IUserPayload>(handleError(error));

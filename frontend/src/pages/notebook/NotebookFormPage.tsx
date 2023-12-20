@@ -149,8 +149,6 @@ export const ClientFormPage = (): JSX.Element => {
     dispatch(onChangeStatus(statusNotebook.ok));
   };
 
-console.log(precio)
-
   return (
     <Box sx={{ position: 'relative', m: 2 }}>
       {edit && (
